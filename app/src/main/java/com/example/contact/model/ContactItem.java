@@ -1,5 +1,7 @@
 package com.example.contact.model;
 
+import static java.lang.String.format;
+
 public class ContactItem {
     private String  nom, prenom, phone, adresse, email;
     private Integer id;
@@ -14,6 +16,12 @@ public class ContactItem {
         this.phone = phone;
         this.adresse = adresse;
         this.email = email;
+    }
+
+    @Override
+    public String toString(){
+        String format = format("%s %s", this.nom, this.prenom);
+        return format;
     }
 
     //getter
