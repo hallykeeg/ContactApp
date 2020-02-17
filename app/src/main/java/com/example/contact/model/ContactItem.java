@@ -22,6 +22,8 @@ public class ContactItem {
     public String toString(){
         String format = format("%s %s", this.nom, this.prenom);
         return format;
+
+
     }
 
     //getter
