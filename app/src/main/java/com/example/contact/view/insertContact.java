@@ -9,6 +9,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.contact.R;
@@ -23,7 +24,7 @@ public class insertContact extends AppCompatActivity {
 
     private EditText editTextPrenom, editTextNom, editTextPhone, editTextAdresse, editTextEmail;
     private ContactItem contactItem;
-    private Button sauvegarder, annuler;
+    private ImageButton sauvegarder, annuler;
     private ArrayList<EditText> collectionEditText;
     private Boolean allFieldFilled=true;
 
@@ -34,8 +35,8 @@ public class insertContact extends AppCompatActivity {
         getSupportActionBar().hide();
 
         //recuperation des views
-        sauvegarder = (Button) findViewById(R.id.buttonSave);
-        annuler = (Button) findViewById(R.id.buttonCancel);
+        sauvegarder = (ImageButton) findViewById(R.id.buttonSave);
+        annuler = (ImageButton) findViewById(R.id.buttonCancel);
         editTextPrenom = (EditText) findViewById(R.id.editTextPrenom);
         editTextNom = (EditText) findViewById(R.id.editTextNom);
         editTextAdresse = (EditText) findViewById(R.id.editTextAdress);

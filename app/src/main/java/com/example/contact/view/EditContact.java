@@ -9,6 +9,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.contact.R;
@@ -21,7 +22,7 @@ import static android.widget.Toast.LENGTH_SHORT;
 
 public class EditContact extends AppCompatActivity {
 
-private Button buttonSave, buttonCancel;
+private ImageButton buttonSave, buttonCancel;
 private EditText editTextNom, editTextPrenom, editTextPhone, editTextAdresse, editTextEmail;
 private ContactItem contactItem;
 private boolean filled =true;
@@ -68,8 +69,8 @@ private ArrayList<EditText> collectionEditText;
         editTextPhone.setText(phone);
         editTextAdresse.setText(adresse);
 
-        buttonCancel = (Button) findViewById(R.id.buttonCancel);
-        buttonSave = (Button) findViewById(R.id.buttonSave);
+        buttonCancel = (ImageButton) findViewById(R.id.buttonCancel);
+        buttonSave = (ImageButton) findViewById(R.id.buttonSave);
 
         buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override

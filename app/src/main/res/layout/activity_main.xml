@@ -11,7 +11,7 @@
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
-        android:layout_height="491dp">
+        android:layout_height="478dp">
 
     </ListView>
 
@@ -19,16 +19,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:orientation="horizontal">
+        android:layout_margin="5dp"
+        android:alpha="1"
+        android:orientation="horizontal"
+        android:visibility="visible">
 
         <ImageButton
             android:id="@+id/addButton"
             style="@android:style/Widget.ImageButton"
-            android:layout_width="96dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_width="80dp"
+            android:layout_height="50dp"
+            android:layout_margin="10dp"
             android:layout_weight="1"
             app:srcCompat="@drawable/add" />
+
+        <ImageButton
+            android:id="@+id/imageButtonInformation"
+            style="@android:style/Widget.ImageButton"
+            android:layout_width="80dp"
+            android:layout_height="50dp"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:src="@drawable/information" />
+
     </LinearLayout>
 
 </LinearLayout>

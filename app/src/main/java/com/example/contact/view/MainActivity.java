@@ -1,7 +1,9 @@
 package com.example.contact.view;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -32,7 +34,7 @@ private ArrayList<ContactItem> arrayList;
 private ArrayList arrayListDoublon;
 private ArrayAdapter arrayAdapterDoublon;
 private CustomAdapter arrayAdapter;
-private ImageButton ajouterContact;
+private ImageButton ajouterContact, infoImageButton;
 private ContactItem contactItem;
 
     @Override
@@ -41,6 +43,9 @@ private ContactItem contactItem;
         setContentView(R.layout.activity_main);
         listView = (ListView) findViewById(R.id.listView);
         ajouterContact = (ImageButton) findViewById(R.id.addButton);
+        infoImageButton = (ImageButton) findViewById(R.id.imageButtonInformation) ;
+
+
 
         ajouterContact.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,6 +88,26 @@ private ContactItem contactItem;
                 intent.putExtra("id", arrayList.get(position).getId() );
                 startActivity(intent);
                 finish();
+            }
+        });
+
+        infoImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
+                builder1.setTitle("Infos Contact");
+                String message ="Il y a "+ arrayListDoublon.size()+" contacts enregistres";
+                builder1.setMessage(message);
+                builder1.setCancelable(true);
+                builder1.setNeutralButton(android.R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+                AlertDialog alert11 = builder1.create();
+                alert11.show();
             }
         });
 

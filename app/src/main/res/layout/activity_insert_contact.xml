@@ -94,25 +94,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="15dp"
+            android:layout_margin="5dp"
             android:orientation="horizontal">
 
-            <Button
+            <ImageButton
                 android:id="@+id/buttonSave"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
+                style="@android:style/Widget.ImageButton"
+                android:layout_width="80dp"
+                android:layout_height="50dp"
+                android:layout_margin="15dp"
                 android:layout_weight="1"
-                android:onClick="sauvegarder"
-                android:text="Sauvegarder" />
+                app:srcCompat="@drawable/check" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/buttonCancel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
+                style="@android:style/Widget.ImageButton"
+                android:layout_width="80dp"
+                android:layout_height="50dp"
+                android:layout_margin="15dp"
                 android:layout_weight="1"
-                android:text="Annuler" />
+                app:srcCompat="@drawable/non" />
         </LinearLayout>
 
     </LinearLayout>
