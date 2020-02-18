@@ -67,7 +67,7 @@ private ContactItem contactItem;
                 AlertDialog.Builder builder = new AlertDialog.Builder(AfficherContact.this);
 
                 builder.setTitle("Confirmation");
-                builder.setMessage("Voulez-vous vraiment supprimer ?");
+                builder.setMessage("Voulez-vous vraiment supprimer "+prenom+ " " +nom+" ?");
 
                 builder.setPositiveButton("OUI", new DialogInterface.OnClickListener() {
 
@@ -76,7 +76,7 @@ private ContactItem contactItem;
                         SQLiteController sqLiteController1 = new SQLiteController(getApplicationContext());
                        int reponse = sqLiteController1.dropContact(idContact);
                        if(reponse==1){
-                           Toast toast = Toast.makeText(getApplicationContext(), "Contact supprime", LENGTH_SHORT);
+                           Toast toast = Toast.makeText(getApplicationContext(), "CONTACT SUPPRIME", LENGTH_SHORT);
                            toast.setGravity((Gravity.TOP| Gravity.CENTER_VERTICAL), 1, 5);
                            toast.show();
                            Intent intent2;

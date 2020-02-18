@@ -71,7 +71,7 @@ public class insertContact extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
 
-        Toast toast = Toast.makeText(getApplicationContext(), "Enregistrement annule", LENGTH_SHORT);
+        Toast toast = Toast.makeText(getApplicationContext(), "ENREGISTREMENT ANNULE", LENGTH_SHORT);
         toast.setGravity((Gravity.TOP| Gravity.CENTER_VERTICAL), 1, 5);
         toast.show();
         finish();
@@ -94,7 +94,7 @@ public class insertContact extends AppCompatActivity {
             long l = sqLiteController.insertContact(new ContactItem(1, nom, prenom, phone, adresse, email));
             if(l!=-1){
                 //insertion reussie
-                String message = prenom+" a ete enregistre avec succes!";
+                String message = prenom+" A ETE ENREGISTRE!";
                 Toast toast = Toast.makeText(getApplicationContext(), message, LENGTH_SHORT);
                 toast.setGravity((Gravity.TOP| Gravity.CENTER_VERTICAL), 1, 5);
                 toast.show();
@@ -106,7 +106,7 @@ public class insertContact extends AppCompatActivity {
 
             }else{
                 //insertion echoue, reessayez
-                Toast toast = Toast.makeText(getApplicationContext(), "Echec d'enregistrement", LENGTH_SHORT);
+                Toast toast = Toast.makeText(getApplicationContext(), "ECHEC ENREGISTREMENT", LENGTH_SHORT);
                 toast.setGravity((Gravity.TOP| Gravity.CENTER_VERTICAL), 1, 5);
                 toast.show();
                 this.nettoyerChamps(collectionEditText);

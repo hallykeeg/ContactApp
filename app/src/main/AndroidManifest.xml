@@ -11,11 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".view.AfficherContact"
-            android:parentActivityName=".view.MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.contact.view.MainActivity" />
+        <activity android:name=".view.AfficherContact">
         </activity>
         <activity android:name=".view.EditContact" />
         <activity android:name=".view.insertContact" />

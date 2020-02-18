@@ -25,8 +25,12 @@ import com.example.contact.model.ContactItem;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+
+    //attributes
 private ListView listView;
 private ArrayList<ContactItem> arrayList;
+private ArrayList arrayListDoublon;
+private ArrayAdapter arrayAdapterDoublon;
 private CustomAdapter arrayAdapter;
 private ImageButton ajouterContact;
 private ContactItem contactItem;
@@ -48,6 +52,8 @@ private ContactItem contactItem;
         });
 
         arrayList = new ArrayList<>();
+        arrayListDoublon = new ArrayList();
+
         SQLiteController sqLiteController = new SQLiteController(getApplicationContext());
 //        sqLiteController.insertContact(new ContactItem(1,"Romulus", "Ronick","38471151", "34, rue casseus", "roromulus@yahoo.com"));
         Cursor cursor = sqLiteController.selectContact();
@@ -61,9 +67,13 @@ private ContactItem contactItem;
 
             contactItem = new ContactItem(id, nom, prenom,phone,adresse,email);
             arrayList.add(contactItem);
+            arrayListDoublon.add(nom + " "+prenom);
+
+
         }
-        arrayAdapter = new CustomAdapter(getApplicationContext(), R.layout.customlist,arrayList);
-        listView.setAdapter(arrayAdapter);
+        arrayAdapterDoublon = new ArrayAdapter(getApplicationContext(),android.R.layout.simple_list_item_1,arrayListDoublon);
+       // arrayAdapter = new CustomAdapter(getApplicationContext(), R.layout.customlist,arrayList);
+        listView.setAdapter(arrayAdapterDoublon);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -91,13 +101,13 @@ private ContactItem contactItem;
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                arrayAdapter.getFilter().filter(query);
+                arrayAdapterDoublon.getFilter().filter(query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                arrayAdapter.getFilter().filter(newText);
+                arrayAdapterDoublon.getFilter().filter(newText);
                 return false;
             }
         });

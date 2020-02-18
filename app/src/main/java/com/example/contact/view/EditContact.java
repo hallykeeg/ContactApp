@@ -42,6 +42,8 @@ private ArrayList<EditText> collectionEditText;
         final String phone = intent.getStringExtra("phone");
         final String email = intent.getStringExtra("email");
 
+        final Integer id_for_Intent = Integer.parseInt(id);
+
 //        contactItem = new ContactItem((id),nom,prenom,phone,adresse,email);
 
         //recuperations des champs de saisie
@@ -72,10 +74,11 @@ private ArrayList<EditText> collectionEditText;
         buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast toast = Toast.makeText(getApplicationContext(), "Modification annulee", LENGTH_SHORT);
+                Toast toast = Toast.makeText(getApplicationContext(), "MODIFICATION ANNULEE", LENGTH_SHORT);
                 toast.setGravity((Gravity.TOP| Gravity.CENTER_VERTICAL), 1, 5);
                 toast.show();
-                Intent intent1 = new Intent(getApplicationContext(), MainActivity.class);
+                Intent intent1 = new Intent(getApplicationContext(), AfficherContact.class);
+                intent1.putExtra("id", id_for_Intent);
                 startActivity(intent1);
                 finish();
             }
@@ -91,21 +94,23 @@ private ArrayList<EditText> collectionEditText;
 
                    if(i==1){//si tout s'est bien deroule
 
-                       Toast toast = Toast.makeText(getApplicationContext(), "Modification effectuee", LENGTH_SHORT);
+                       Toast toast = Toast.makeText(getApplicationContext(), "EFFECTUE", LENGTH_SHORT);
                        toast.setGravity((Gravity.TOP| Gravity.CENTER_VERTICAL), 1, 5);
                        toast.show();
-                       Intent intent2;
-                       intent2 = new Intent(getApplicationContext(), MainActivity.class);
-                       startActivity(intent2);
+                       Intent intentRetour;
+                       intentRetour = new Intent(EditContact.this, AfficherContact.class);
+                       intentRetour.putExtra("id", id_for_Intent);
+                       startActivity(intentRetour);
                        finish();
 
                    }else { //sinon
 
-                       Toast toast = Toast.makeText(getApplicationContext(), "Modification echouee", LENGTH_SHORT);
+                       Toast toast = Toast.makeText(getApplicationContext(), "ECHEC DE MODIFICATION", LENGTH_SHORT);
                        toast.setGravity((Gravity.TOP| Gravity.CENTER_VERTICAL), 1, 5);
                        toast.show();
                        Intent intent3;
-                       intent3 = new Intent(getApplicationContext(), MainActivity.class);
+                       intent3 = new Intent(getApplicationContext(), AfficherContact.class);
+                       intent3.putExtra("id", id_for_Intent);
                        startActivity(intent3);
                        finish();
                    }

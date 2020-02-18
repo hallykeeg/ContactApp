@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,7 +17,7 @@ import com.example.contact.model.ContactItem;
 
 import java.util.ArrayList;
 
-public class CustomAdapter extends ArrayAdapter<ContactItem> {
+public class CustomAdapter extends ArrayAdapter<ContactItem> implements Filterable {
 
     private Context context;
     private ArrayList<ContactItem> arrayList;
