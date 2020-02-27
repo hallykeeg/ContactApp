@@ -37,7 +37,7 @@ public class SQLiteController extends SQLiteOpenHelper {
          SQLiteDatabase db = this.getWritableDatabase();
          long insert = -33;
          if(!alreadyExists(contactItem)){
-             //le contactn existe pas ds la base
+             //le contact n existe pas ds la base
 
              ContentValues contentValues = new ContentValues();
 
@@ -130,9 +130,9 @@ public class SQLiteController extends SQLiteOpenHelper {
         result.moveToFirst();
         int nombre = result.getInt(0);
         if(nombre==0){
-            val = true;
-        }else{
             val = false;
+        }else{
+            val = true;
         }
         return  val;
     }

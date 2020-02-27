@@ -123,10 +123,7 @@ public class InsertContact extends AppCompatActivity {
 
                 AlertDialog alert11 = builder1.create();
                 alert11.show();
-            }
-
-
-            else{
+            } else{
                 //insertion reussie
                 String message = prenom+" A ETE ENREGISTRE!";
                 Toast toast = Toast.makeText(getApplicationContext(), message, LENGTH_SHORT);
