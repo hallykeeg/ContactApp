@@ -91,7 +91,7 @@ private ArrayList<EditText> collectionEditText;
                 if(filled){
 
                     SQLiteController sqLiteController = new SQLiteController(getApplicationContext());
-                   int i= sqLiteController.updateContact(id, editTextNom.getText().toString(), editTextPrenom.getText().toString(), editTextPhone.getText().toString(), editTextAdresse.getText().toString(), editTextEmail.getText().toString());
+                   int i = sqLiteController.updateContact(id, editTextNom.getText().toString(), editTextPrenom.getText().toString(), editTextPhone.getText().toString(), editTextAdresse.getText().toString(), editTextEmail.getText().toString());
 
                    if(i==1){//si tout s'est bien deroule
 

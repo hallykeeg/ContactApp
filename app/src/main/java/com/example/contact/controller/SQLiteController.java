@@ -34,17 +34,22 @@ public class SQLiteController extends SQLiteOpenHelper {
     }
 
     public long insertContact(ContactItem contactItem){
-    SQLiteDatabase db = this.getWritableDatabase();
+         SQLiteDatabase db = this.getWritableDatabase();
+         long insert = -33;
+         if(!alreadyExists(contactItem)){
+             //le contactn existe pas ds la base
 
-        ContentValues contentValues = new ContentValues();
+             ContentValues contentValues = new ContentValues();
 
-        contentValues.put("nom", contactItem.getNom());
-        contentValues.put("prenom", contactItem.getPrenom());
-        contentValues.put("phone", contactItem.getPhone());
-        contentValues.put("adresse", contactItem.getAdresse());
-        contentValues.put("email", contactItem.getEmail());
+             contentValues.put("nom", contactItem.getNom());
+             contentValues.put("prenom", contactItem.getPrenom());
+             contentValues.put("phone", contactItem.getPhone());
+             contentValues.put("adresse", contactItem.getAdresse());
+             contentValues.put("email", contactItem.getEmail());
 
-        long insert= db.insert("contact", null,contentValues);
+             insert= db.insert("contact", null,contentValues);
+         }
+
         return insert;
     }
 
@@ -100,8 +105,8 @@ public class SQLiteController extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         String select = "SELECT * from contact";
         final Cursor cursor = db.rawQuery(select, null);
-        Cursor cursor1 = cursor;
-        return cursor1;
+
+        return cursor;
 
     }
     public Cursor selectContactByID(String id){
@@ -109,12 +114,28 @@ public class SQLiteController extends SQLiteOpenHelper {
         String[] params = new String[]{ id };
         String select = "SELECT * from contact WHERE id=?";
         final Cursor cursor = db.rawQuery(select, params );
-        Cursor cursor1 = cursor;
-        return cursor1;
+
+        return cursor;
 
     }
 
-    public void save(){
-
+    private boolean alreadyExists(ContactItem contactItem){
+        String nom = contactItem.getNom();
+        String prenom = contactItem.getPrenom();
+        boolean val;
+        SQLiteDatabase base = this.getReadableDatabase();
+        String[] conditions = new String[]{nom, prenom};
+        String sql = "SELECT COUNT(id) FROM contact WHERE nom=? AND prenom=?";
+        final  Cursor result = base.rawQuery(sql,conditions);
+        result.moveToFirst();
+        int nombre = result.getInt(0);
+        if(nombre==0){
+            val = true;
+        }else{
+            val = false;
+        }
+        return  val;
     }
+
+
 }

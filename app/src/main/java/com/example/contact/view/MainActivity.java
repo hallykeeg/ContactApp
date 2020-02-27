@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -50,7 +49,7 @@ private ContactItem contactItem;
         ajouterContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), insertContact.class);
+                Intent intent = new Intent(getApplicationContext(), InsertContact.class);
                 startActivity(intent);
                 finish();
             }
@@ -60,7 +59,7 @@ private ContactItem contactItem;
         arrayListDoublon = new ArrayList();
 
         SQLiteController sqLiteController = new SQLiteController(getApplicationContext());
-//        sqLiteController.insertContact(new ContactItem(1,"Romulus", "Ronick","38471151", "34, rue casseus", "roromulus@yahoo.com"));
+//        sqLiteController.InsertContact(new ContactItem(1,"Romulus", "Ronick","38471151", "34, rue casseus", "roromulus@yahoo.com"));
         Cursor cursor = sqLiteController.selectContact();
         while(cursor.moveToNext()){
             Integer id = cursor.getInt(cursor.getColumnIndex("id"));
@@ -73,11 +72,12 @@ private ContactItem contactItem;
             contactItem = new ContactItem(id, nom, prenom,phone,adresse,email);
             arrayList.add(contactItem);
             arrayListDoublon.add(nom + " "+prenom);
+//            arrayListDoublon.set(id, prenom+" "+nom);
 
 
         }
         arrayAdapterDoublon = new ArrayAdapter(getApplicationContext(),android.R.layout.simple_list_item_1,arrayListDoublon);
-       // arrayAdapter = new CustomAdapter(getApplicationContext(), R.layout.customlist,arrayList);
+        arrayAdapter = new CustomAdapter(getApplicationContext(), R.layout.customlist,arrayList);
         listView.setAdapter(arrayAdapterDoublon);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -85,9 +85,13 @@ private ContactItem contactItem;
 
                 //on va recuperer id du contact selectionne
                 Intent intent = new Intent(getApplicationContext(), AfficherContact.class);
-                intent.putExtra("id", arrayList.get(position).getId() );
+                String nomFiltre= arrayAdapterDoublon.getItem(position).toString();
+                int identifiant = findIdByName(arrayList, nomFiltre);
+//                String tempon = String.valueOf(id);
+//                Integer resultat = Integer.parseInt(tempon);
+                intent.putExtra("id", identifiant );
                 startActivity(intent);
-                finish();
+//                finish();
             }
         });
 
@@ -138,5 +142,18 @@ private ContactItem contactItem;
         });
 
         return true;
+    }
+
+    //methode pour comparer le nom resultant d une recherche avec les noms contenus ds les objets afin d en trouver l'id
+    public int findIdByName(ArrayList<ContactItem> table, String name){
+        int i, idObject=-1;
+        for(i=0; i<table.size(); i++ ){
+
+            String nameObject = table.get(i).getNom()+" "+table.get(i).getPrenom();
+            if(name.equals(nameObject)){
+                idObject = table.get(i).getId();
+            }
+        }
+        return idObject;
     }
 }

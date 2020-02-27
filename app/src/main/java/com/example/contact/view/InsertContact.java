@@ -1,7 +1,9 @@
 package com.example.contact.view;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -20,7 +22,7 @@ import java.util.ArrayList;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
-public class insertContact extends AppCompatActivity {
+public class InsertContact extends AppCompatActivity {
 
     private EditText editTextPrenom, editTextNom, editTextPhone, editTextAdresse, editTextEmail;
     private ContactItem contactItem;
@@ -75,7 +77,7 @@ public class insertContact extends AppCompatActivity {
         Toast toast = Toast.makeText(getApplicationContext(), "ENREGISTREMENT ANNULE", LENGTH_SHORT);
         toast.setGravity((Gravity.TOP| Gravity.CENTER_VERTICAL), 1, 5);
         toast.show();
-        finish();
+//        finish();
     }
 
     //methode pr sauvegarder un contact
@@ -93,7 +95,38 @@ public class insertContact extends AppCompatActivity {
             email = editTextEmail.getText().toString();
 
             long l = sqLiteController.insertContact(new ContactItem(1, nom, prenom, phone, adresse, email));
-            if(l!=-1){
+            if(l==-1){
+
+                //insertion echoue, reessayez
+                Toast toast = Toast.makeText(getApplicationContext(), "ECHEC ENREGISTREMENT", LENGTH_SHORT);
+                toast.setGravity((Gravity.TOP| Gravity.CENTER_VERTICAL), 1, 5);
+                toast.show();
+                this.nettoyerChamps(collectionEditText);
+
+
+            }else if (l==-33){
+                //ce contact existe deja
+
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(InsertContact.this);
+                builder1.setTitle("Redondance");
+                String message =prenom+" "+nom+" existe deja dans vos contacts";
+                builder1.setMessage(message);
+                builder1.setCancelable(true);
+                builder1.setNeutralButton(android.R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                startActivity(intent);
+                            }
+                        });
+
+                AlertDialog alert11 = builder1.create();
+                alert11.show();
+            }
+
+
+            else{
                 //insertion reussie
                 String message = prenom+" A ETE ENREGISTRE!";
                 Toast toast = Toast.makeText(getApplicationContext(), message, LENGTH_SHORT);
@@ -104,13 +137,6 @@ public class insertContact extends AppCompatActivity {
                 toast.show();
                 finish();
 
-
-            }else{
-                //insertion echoue, reessayez
-                Toast toast = Toast.makeText(getApplicationContext(), "ECHEC ENREGISTREMENT", LENGTH_SHORT);
-                toast.setGravity((Gravity.TOP| Gravity.CENTER_VERTICAL), 1, 5);
-                toast.show();
-                this.nettoyerChamps(collectionEditText);
 
             }
 

@@ -14,7 +14,7 @@
         <activity android:name=".view.AfficherContact">
         </activity>
         <activity android:name=".view.EditContact" />
-        <activity android:name=".view.insertContact" />
+        <activity android:name=".view.InsertContact" />
         <activity android:name=".view.SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
