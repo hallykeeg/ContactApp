@@ -16,8 +16,8 @@ public class SQLiteController extends SQLiteOpenHelper {
     private static final Integer version=1;
     private final static String TABLE_CREATION="CREATE TABLE IF NOT EXISTS contact"+
             "(id INTEGER PRIMARY KEY AUTOINCREMENT, nom TEXT(35) NOT NULL," +
-            "prenom TEXT(35) NOT NULL, phone TEXT(25) NOT NULL,"+
-            " adresse TEXT(50) NOT NULL, email TEXT(30) NOT NULL )";
+            "prenom TEXT(35) , phone TEXT(25),"+
+            " adresse TEXT(50), email TEXT(30) )";
 
     public SQLiteController(Context context) {
         super(context, name, null, version);
@@ -35,8 +35,8 @@ public class SQLiteController extends SQLiteOpenHelper {
 
     public long insertContact(ContactItem contactItem){
          SQLiteDatabase db = this.getWritableDatabase();
-         long insert = -33;
-         if(!alreadyExists(contactItem)){
+         long insert;
+
              //le contact n existe pas ds la base
 
              ContentValues contentValues = new ContentValues();
@@ -48,7 +48,7 @@ public class SQLiteController extends SQLiteOpenHelper {
              contentValues.put("email", contactItem.getEmail());
 
              insert= db.insert("contact", null,contentValues);
-         }
+
 
         return insert;
     }
@@ -60,6 +60,7 @@ public class SQLiteController extends SQLiteOpenHelper {
         int i = db.delete("contact", whereClause, whereArgs);
         return i;
     }
+
     public int dropContact(String id){
         SQLiteDatabase db = getWritableDatabase();
         String whereClause = "id=?";
@@ -84,6 +85,7 @@ public class SQLiteController extends SQLiteOpenHelper {
         int i = db.update("contact",contentValues,whereClause, params);
         return  i;
     }
+
     public int updateContact(ContactItem contactItem){
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -103,12 +105,13 @@ public class SQLiteController extends SQLiteOpenHelper {
 
     public Cursor selectContact(){
         SQLiteDatabase db = this.getReadableDatabase();
-        String select = "SELECT * from contact";
+        String select = "SELECT * from contact ORDER BY nom, prenom";
         final Cursor cursor = db.rawQuery(select, null);
 
         return cursor;
 
     }
+
     public Cursor selectContactByID(String id){
         SQLiteDatabase db = this.getReadableDatabase();
         String[] params = new String[]{ id };
@@ -137,5 +140,6 @@ public class SQLiteController extends SQLiteOpenHelper {
         return  val;
     }
 
-
 }
+
+

@@ -44,12 +44,11 @@ public class InsertContact extends AppCompatActivity {
         editTextAdresse = (EditText) findViewById(R.id.editTextAdress);
         editTextPhone = (EditText) findViewById(R.id.editTextPhone);
         editTextEmail = (EditText) findViewById(R.id.editTextEmail);
+
         collectionEditText = new ArrayList<>();
-        collectionEditText.add(editTextAdresse);
-        collectionEditText.add(editTextPhone);
-        collectionEditText.add(editTextEmail);
+
         collectionEditText.add(editTextNom);
-        collectionEditText.add(editTextPrenom);
+
 
         //listener
         sauvegarder.setOnClickListener(new View.OnClickListener() {
@@ -104,26 +103,28 @@ public class InsertContact extends AppCompatActivity {
                 this.nettoyerChamps(collectionEditText);
 
 
-            }else if (l==-33){
-                //ce contact existe deja
-
-                AlertDialog.Builder builder1 = new AlertDialog.Builder(InsertContact.this);
-                builder1.setTitle("Redondance");
-                String message =prenom+" "+nom+" existe deja dans vos contacts";
-                builder1.setMessage(message);
-                builder1.setCancelable(true);
-                builder1.setNeutralButton(android.R.string.ok,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                startActivity(intent);
-                            }
-                        });
-
-                AlertDialog alert11 = builder1.create();
-                alert11.show();
-            } else{
+            }
+//            else if (l==-33){
+//                //ce contact existe deja
+//
+//                AlertDialog.Builder builder1 = new AlertDialog.Builder(InsertContact.this);
+//                builder1.setTitle("Redondance");
+//                String message =prenom+" "+nom+" existe deja dans vos contacts";
+//                builder1.setMessage(message);
+//                builder1.setCancelable(true);
+//                builder1.setNeutralButton(android.R.string.ok,
+//                        new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int id) {
+//                                dialog.cancel();
+//                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//                                startActivity(intent);
+//                            }
+//                        });
+//
+//                AlertDialog alert11 = builder1.create();
+//                alert11.show();
+//            }
+            else{
                 //insertion reussie
                 String message = prenom+" A ETE ENREGISTRE!";
                 Toast toast = Toast.makeText(getApplicationContext(), message, LENGTH_SHORT);

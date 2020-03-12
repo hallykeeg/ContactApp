@@ -20,10 +20,7 @@ public class ContactItem {
 
     @Override
     public String toString(){
-        String format = format("%s %s", this.nom, this.prenom);
-        return format;
-
-
+        return this.nom;
     }
 
     //getter

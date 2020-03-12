@@ -54,12 +54,15 @@ private ArrayList<EditText> collectionEditText;
         editTextPhone = (EditText) findViewById(R.id.editTextPhone);
         editTextEmail = (EditText) findViewById(R.id.editTextEmail);
 
+
         collectionEditText = new ArrayList<>();
-        collectionEditText.add(editTextAdresse);
-        collectionEditText.add(editTextPhone);
-        collectionEditText.add(editTextEmail);
         collectionEditText.add(editTextNom);
-        collectionEditText.add(editTextPrenom);
+//
+//        collectionEditText.add(editTextAdresse);
+//        collectionEditText.add(editTextPhone);
+//        collectionEditText.add(editTextEmail);
+//
+//        collectionEditText.add(editTextPrenom);
 
 
         //charger les donnees a modifier

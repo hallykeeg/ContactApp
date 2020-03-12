@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     //attributes
 private ListView listView;
-private ArrayList<ContactItem> arrayList;
+private ArrayList<ContactItem> arrayList, resultats;
 private ArrayList arrayListDoublon;
 private ArrayAdapter arrayAdapterDoublon;
 private CustomAdapter arrayAdapter;
@@ -40,6 +40,7 @@ private ContactItem contactItem;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         listView = (ListView) findViewById(R.id.listView);
         ajouterContact = (ImageButton) findViewById(R.id.addButton);
         infoImageButton = (ImageButton) findViewById(R.id.imageButtonInformation) ;
@@ -55,7 +56,7 @@ private ContactItem contactItem;
             }
         });
 
-        arrayList = new ArrayList<>();
+        arrayList = new ArrayList<ContactItem>();
         arrayListDoublon = new ArrayList();
 
         SQLiteController sqLiteController = new SQLiteController(getApplicationContext());
@@ -76,19 +77,21 @@ private ContactItem contactItem;
 
 
         }
-        arrayAdapterDoublon = new ArrayAdapter(getApplicationContext(),android.R.layout.simple_list_item_1,arrayListDoublon);
-        arrayAdapter = new CustomAdapter(getApplicationContext(), R.layout.customlist,arrayList);
-        listView.setAdapter(arrayAdapterDoublon);
+//        arrayAdapterDoublon = new ArrayAdapter(getApplicationContext(),android.R.layout.simple_list_item_1,arrayListDoublon);
+        arrayAdapter = new CustomAdapter(getApplicationContext(), R.layout.customlist, arrayList);
+        listView.setAdapter(arrayAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 //on va recuperer id du contact selectionne
                 Intent intent = new Intent(getApplicationContext(), AfficherContact.class);
-                String nomFiltre= arrayAdapterDoublon.getItem(position).toString();
-                int identifiant = findIdByName(arrayList, nomFiltre);
+//                String nomFiltre= arrayAdapterDoublon.getItem(position).toString();
+//                int identifiant = findIdByName(arrayList, nomFiltre);
+
 //                String tempon = String.valueOf(id);
 //                Integer resultat = Integer.parseInt(tempon);
+                Integer identifiant =( (ContactItem)(arrayAdapter.getItem(position) ) ).getId();
                 intent.putExtra("id", identifiant );
                 startActivity(intent);
 //                finish();
@@ -130,13 +133,25 @@ private ContactItem contactItem;
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                arrayAdapterDoublon.getFilter().filter(query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                arrayAdapterDoublon.getFilter().filter(newText);
+
+                String nom, prenom, completeName, filtre;
+                filtre = newText.replaceAll("\\s+","").toLowerCase();
+                resultats =new ArrayList<>();
+                for(ContactItem x: arrayList){
+                    nom = x.getNom().toLowerCase();
+                    prenom = x.getPrenom().toLowerCase();
+                    completeName = prenom+nom;
+
+                    if(nom.contains(newText.toLowerCase()) | prenom.contains(newText.toLowerCase()) | completeName.contains(filtre) ){
+                        resultats.add(x);
+                    }
+                }
+                ( (CustomAdapter) listView.getAdapter()).update(resultats);
                 return false;
             }
         });
