@@ -1,27 +1,19 @@
-package com.example.contact.controller;
+package com.example.contact.controller
 
-import com.example.contact.model.ContactItem;
+import com.example.contact.model.ContactItem
 
-public final class Controller {
+class Controller  /* singleton pattern */
+private constructor() {
+    private val contactItem: ContactItem? = null
+    fun nouveauContact(nom: String?, prenom: String?, phone: String?, adresse: String?, email: String?) {}
 
-    public static  Controller controller=null;
-    private ContactItem contactItem;
-
-    /* singleton pattern */
-    private Controller(){
-        super();
-    }
-
-    public static Controller getController(){
-        if(controller == null){
-            controller = new Controller();
-
+    companion object {
+       private var controller: Controller? = null
+        fun getController(): Controller? {
+            if (controller == null) {
+                controller = Controller()
+            }
+            return controller
         }
-        return controller;
-
-    }
-
-    public void nouveauContact(String nom, String prenom, String phone, String adresse, String email){
-
     }
 }

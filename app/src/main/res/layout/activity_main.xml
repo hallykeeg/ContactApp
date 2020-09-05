@@ -5,13 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="#CBCBCB"
     tools:context="view.MainActivity">
 
 
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
-        android:layout_height="478dp">
+        android:layout_height="478dp"
+        >
 
     </ListView>
 
@@ -21,6 +23,7 @@
         android:layout_gravity="center"
         android:layout_margin="5dp"
         android:alpha="1"
+        android:background="@color/colorPrimary"
         android:orientation="horizontal"
         android:visibility="visible">
 
@@ -31,7 +34,8 @@
             android:layout_height="50dp"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            app:srcCompat="@drawable/add" />
+            app:srcCompat="@drawable/add_icon"
+            tools:ignore="VectorDrawableCompat" />
 
         <ImageButton
             android:id="@+id/imageButtonInformation"
@@ -40,7 +44,7 @@
             android:layout_height="50dp"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:src="@drawable/information" />
+            android:src="@drawable/info_icon" />
 
     </LinearLayout>
 

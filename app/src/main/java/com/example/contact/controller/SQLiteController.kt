@@ -1,145 +1,110 @@
-package com.example.contact.controller;
+package com.example.contact.controller
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
+import android.content.ContentValues
+import android.content.Context
+import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteOpenHelper
+import com.example.contact.model.ContactItem
 
-import androidx.annotation.Nullable;
-
-import com.example.contact.model.ContactItem;
-
-public class SQLiteController extends SQLiteOpenHelper {
-
-    private static final String name="contact.db";
-    private static final Integer version=1;
-    private final static String TABLE_CREATION="CREATE TABLE IF NOT EXISTS contact"+
-            "(id INTEGER PRIMARY KEY AUTOINCREMENT, nom TEXT(35) NOT NULL," +
-            "prenom TEXT(35) , phone TEXT(25),"+
-            " adresse TEXT(50), email TEXT(30) )";
-
-    public SQLiteController(Context context) {
-        super(context, name, null, version);
+class SQLiteController(context: Context?) : SQLiteOpenHelper(context, name, null, version) {
+    override fun onCreate(db: SQLiteDatabase) {
+        db.execSQL(TABLE_CREATION)
     }
 
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-        db.execSQL(TABLE_CREATION);
+    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
+    fun insertContact(contactItem: ContactItem): Long {
+        val db = this.writableDatabase
+        val insert: Long
+
+        //le contact n existe pas ds la base
+        val contentValues = ContentValues()
+        contentValues.put("nom", contactItem.nom)
+        contentValues.put("prenom", contactItem.prenom)
+        contentValues.put("phone", contactItem.phone)
+        contentValues.put("adresse", contactItem.adresse)
+        contentValues.put("email", contactItem.email)
+        insert = db.insert("contact", null, contentValues)
+        return insert
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+    fun dropContact(contactItem: ContactItem): Int {
+        val db = writableDatabase
+        val whereClause = "id=?"
+        val whereArgs = arrayOf(contactItem.id.toString())
+        return db.delete("contact", whereClause, whereArgs)
     }
 
-    public long insertContact(ContactItem contactItem){
-         SQLiteDatabase db = this.getWritableDatabase();
-         long insert;
-
-             //le contact n existe pas ds la base
-
-             ContentValues contentValues = new ContentValues();
-
-             contentValues.put("nom", contactItem.getNom());
-             contentValues.put("prenom", contactItem.getPrenom());
-             contentValues.put("phone", contactItem.getPhone());
-             contentValues.put("adresse", contactItem.getAdresse());
-             contentValues.put("email", contactItem.getEmail());
-
-             insert= db.insert("contact", null,contentValues);
-
-
-        return insert;
+    fun dropContact(id: String): Int {
+        val db = writableDatabase
+        val whereClause = "id=?"
+        val whereArgs = arrayOf(id)
+        return db.delete("contact", whereClause, whereArgs)
     }
 
-    public int dropContact(ContactItem contactItem){
-        SQLiteDatabase db = getWritableDatabase();
-        String whereClause = "id=?";
-        String whereArgs[] = {contactItem.getId().toString()};
-        int i = db.delete("contact", whereClause, whereArgs);
-        return i;
+    fun updateContact(id: String, name: String?, pre: String?, phone: String?, adresse: String?, email: String?): Int {
+        val db = this.writableDatabase
+        val contentValues = ContentValues()
+        contentValues.put("nom", name)
+        contentValues.put("prenom", pre)
+        contentValues.put("phone", phone)
+        contentValues.put("adresse", adresse)
+        contentValues.put("email", email)
+        val whereClause = "id=?"
+        val params = arrayOf(id)
+        return db.update("contact", contentValues, whereClause, params)
     }
 
-    public int dropContact(String id){
-        SQLiteDatabase db = getWritableDatabase();
-        String whereClause = "id=?";
-        String whereArgs[] = {id};
-        int i = db.delete("contact", whereClause, whereArgs);
-        return i;
+    fun updateContact(contactItem: ContactItem): Int {
+        val db = this.writableDatabase
+        val contentValues = ContentValues()
+        contentValues.put("nom", contactItem.nom)
+        contentValues.put("prenom", contactItem.prenom)
+        contentValues.put("phone", contactItem.phone)
+        contentValues.put("adresse", contactItem.adresse)
+        contentValues.put("email", contactItem.email)
+        val whereClause = "id=?"
+        val params = arrayOf(contactItem.id.toString())
+        return db.update("contact", contentValues, whereClause, params)
     }
 
-    public int updateContact(String id, String name, String pre, String phone, String adresse, String email){
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("nom", name);
-        contentValues.put("prenom", pre);
-        contentValues.put("phone", phone);
-        contentValues.put("adresse", adresse);
-        contentValues.put("email", email);
-
-        String whereClause = "id=?";
-        String[] params = new String[]{ id };
-
-        int i = db.update("contact",contentValues,whereClause, params);
-        return  i;
+    fun selectContact(): Cursor {
+        val db = this.readableDatabase
+        val select = "SELECT * from contact ORDER BY nom, prenom"
+        return db.rawQuery(select, null)
     }
 
-    public int updateContact(ContactItem contactItem){
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("nom", contactItem.getNom());
-        contentValues.put("prenom", contactItem.getPrenom());
-        contentValues.put("phone", contactItem.getPhone());
-        contentValues.put("adresse", contactItem.getAdresse());
-        contentValues.put("email", contactItem.getEmail());
-
-        String whereClause = "id=?";
-        String[] params = new String[]{ contactItem.getId().toString() };
-
-        int i = db.update("contact",contentValues,whereClause, params);
-        return  i;
+    fun selectContactByID(id: String): Cursor {
+        val db = this.readableDatabase
+        val params = arrayOf(id)
+        val select = "SELECT * from contact WHERE id=?"
+        return db.rawQuery(select, params)
     }
 
-    public Cursor selectContact(){
-        SQLiteDatabase db = this.getReadableDatabase();
-        String select = "SELECT * from contact ORDER BY nom, prenom";
-        final Cursor cursor = db.rawQuery(select, null);
-
-        return cursor;
-
-    }
-
-    public Cursor selectContactByID(String id){
-        SQLiteDatabase db = this.getReadableDatabase();
-        String[] params = new String[]{ id };
-        String select = "SELECT * from contact WHERE id=?";
-        final Cursor cursor = db.rawQuery(select, params );
-
-        return cursor;
-
-    }
-
-    private boolean alreadyExists(ContactItem contactItem){
-        String nom = contactItem.getNom();
-        String prenom = contactItem.getPrenom();
-        boolean val;
-        SQLiteDatabase base = this.getReadableDatabase();
-        String[] conditions = new String[]{nom, prenom};
-        String sql = "SELECT COUNT(id) FROM contact WHERE nom=? AND prenom=?";
-        final  Cursor result = base.rawQuery(sql,conditions);
-        result.moveToFirst();
-        int nombre = result.getInt(0);
-        if(nombre==0){
-            val = false;
-        }else{
-            val = true;
+    private fun alreadyExists(contactItem: ContactItem): Boolean {
+        val nom = contactItem.nom
+        val prenom = contactItem.prenom
+        val `val`: Boolean
+        val base = this.readableDatabase
+        val conditions = arrayOf(nom, prenom)
+        val sql = "SELECT COUNT(id) FROM contact WHERE nom=? AND prenom=?"
+        val result = base.rawQuery(sql, conditions)
+        result.moveToFirst()
+        val nombre = result.getInt(0)
+        `val` = if (nombre == 0) {
+            false
+        } else {
+            true
         }
-        return  val;
+        return `val`
     }
 
+    companion object {
+        private const val name = "contact.db"
+        private const val version = 1
+        private const val TABLE_CREATION = "CREATE TABLE IF NOT EXISTS contact" +
+                "(id INTEGER PRIMARY KEY AUTOINCREMENT, nom TEXT(35) NOT NULL," +
+                "prenom TEXT(35) , phone TEXT(25)," +
+                " adresse TEXT(50), email TEXT(30) )"
+    }
 }
-
-

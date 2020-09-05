@@ -30,7 +30,7 @@
                 android:layout_width="97dp"
                 android:layout_height="173dp"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/contact" />
+                app:srcCompat="@drawable/person_icon" />
 
             <TextView
                 android:id="@+id/textView5"
@@ -95,7 +95,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="5dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:background="@color/colorPrimary">
 
             <ImageButton
                 android:id="@+id/buttonSave"
@@ -104,7 +105,7 @@
                 android:layout_height="50dp"
                 android:layout_margin="15dp"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/check" />
+                app:srcCompat="@drawable/check_icon" />
 
             <ImageButton
                 android:id="@+id/buttonCancel"
@@ -113,7 +114,7 @@
                 android:layout_height="50dp"
                 android:layout_margin="15dp"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/non" />
+                app:srcCompat="@drawable/cancel_icon" />
         </LinearLayout>
 
     </LinearLayout>

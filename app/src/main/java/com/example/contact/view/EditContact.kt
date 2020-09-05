@@ -1,63 +1,56 @@
-package com.example.contact.view;
+package com.example.contact.view
 
-import androidx.appcompat.app.AppCompatActivity;
+import android.content.Intent
+import android.os.Bundle
+import android.text.TextUtils
+import android.view.Gravity
+import android.view.View
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.example.contact.R
+import com.example.contact.controller.SQLiteController
+import com.example.contact.model.ContactItem
+import java.util.*
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.text.TextUtils;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.Toast;
-
-import com.example.contact.R;
-import com.example.contact.controller.SQLiteController;
-import com.example.contact.model.ContactItem;
-
-import java.util.ArrayList;
-
-import static android.widget.Toast.LENGTH_SHORT;
-
-public class EditContact extends AppCompatActivity {
-
-private ImageButton buttonSave, buttonCancel;
-private EditText editTextNom, editTextPrenom, editTextPhone, editTextAdresse, editTextEmail;
-private ContactItem contactItem;
-private boolean filled =true;
-private ArrayList<EditText> collectionEditText;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_contact);
-        getSupportActionBar().hide();
+class EditContact : AppCompatActivity() {
+    private var buttonSave: ImageButton? = null
+    private var buttonCancel: ImageButton? = null
+    private var editTextNom: EditText? = null
+    private var editTextPrenom: EditText? = null
+    private var editTextPhone: EditText? = null
+    private var editTextAdresse: EditText? = null
+    private var editTextEmail: EditText? = null
+    private val contactItem: ContactItem? = null
+    private var filled = true
+    private var collectionEditText: ArrayList<EditText?>? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_edit_contact)
+        supportActionBar!!.hide()
 
         //recuperation des donnees de l'intent
-        Intent intent = getIntent();
-        final String id = intent.getStringExtra("id");
-        final String nom = intent.getStringExtra("nom");
-        final String prenom = intent.getStringExtra("prenom");
-        final String adresse = intent.getStringExtra("adresse");
-        final String phone = intent.getStringExtra("phone");
-        final String email = intent.getStringExtra("email");
-
-        final Integer id_for_Intent = Integer.parseInt(id);
+        val intent = intent
+        val id = intent.getStringExtra("id")
+        val nom = intent.getStringExtra("nom")
+        val prenom = intent.getStringExtra("prenom")
+        val adresse = intent.getStringExtra("adresse")
+        val phone = intent.getStringExtra("phone")
+        val email = intent.getStringExtra("email")
+        val id_for_Intent = id.toInt()
 
 //        contactItem = new ContactItem((id),nom,prenom,phone,adresse,email);
 
         //recuperations des champs de saisie
-        editTextNom = (EditText) findViewById(R.id.editTextNom);
-        editTextPrenom = (EditText) findViewById(R.id.editTextPrenom);
-        editTextAdresse = (EditText) findViewById(R.id.editTextAdress);
-        editTextPhone = (EditText) findViewById(R.id.editTextPhone);
-        editTextEmail = (EditText) findViewById(R.id.editTextEmail);
-
-
-        collectionEditText = new ArrayList<>();
-        collectionEditText.add(editTextNom);
-//
+        editTextNom = findViewById<View>(R.id.editTextNom) as EditText
+        editTextPrenom = findViewById<View>(R.id.editTextPrenom) as EditText
+        editTextAdresse = findViewById<View>(R.id.editTextAdress) as EditText
+        editTextPhone = findViewById<View>(R.id.editTextPhone) as EditText
+        editTextEmail = findViewById<View>(R.id.editTextEmail) as EditText
+        collectionEditText = ArrayList()
+        collectionEditText!!.add(editTextNom)
+        //
 //        collectionEditText.add(editTextAdresse);
 //        collectionEditText.add(editTextPhone);
 //        collectionEditText.add(editTextEmail);
@@ -66,78 +59,59 @@ private ArrayList<EditText> collectionEditText;
 
 
         //charger les donnees a modifier
-        editTextPrenom.setText(prenom);
-        editTextNom.setText(nom);
-        editTextEmail.setText(email);
-        editTextPhone.setText(phone);
-        editTextAdresse.setText(adresse);
-
-        buttonCancel = (ImageButton) findViewById(R.id.buttonCancel);
-        buttonSave = (ImageButton) findViewById(R.id.buttonSave);
-
-        buttonCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast toast = Toast.makeText(getApplicationContext(), "MODIFICATION ANNULEE", LENGTH_SHORT);
-                toast.setGravity((Gravity.TOP| Gravity.CENTER_VERTICAL), 1, 5);
-                toast.show();
-                Intent intent1 = new Intent(getApplicationContext(), AfficherContact.class);
-                intent1.putExtra("id", id_for_Intent);
-                startActivity(intent1);
-                finish();
-            }
-        });
-        buttonSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                estVide();
-                if(filled){
-
-                    SQLiteController sqLiteController = new SQLiteController(getApplicationContext());
-                   int i = sqLiteController.updateContact(id, editTextNom.getText().toString(), editTextPrenom.getText().toString(), editTextPhone.getText().toString(), editTextAdresse.getText().toString(), editTextEmail.getText().toString());
-
-                   if(i==1){//si tout s'est bien deroule
-
-                       Toast toast = Toast.makeText(getApplicationContext(), "EFFECTUE", LENGTH_SHORT);
-                       toast.setGravity((Gravity.TOP| Gravity.CENTER_VERTICAL), 1, 5);
-                       toast.show();
-                       Intent intentRetour;
-                       intentRetour = new Intent(EditContact.this, AfficherContact.class);
-                       intentRetour.putExtra("id", id_for_Intent);
-                       startActivity(intentRetour);
-                       finish();
-
-                   }else { //sinon
-
-                       Toast toast = Toast.makeText(getApplicationContext(), "ECHEC DE MODIFICATION", LENGTH_SHORT);
-                       toast.setGravity((Gravity.TOP| Gravity.CENTER_VERTICAL), 1, 5);
-                       toast.show();
-                       Intent intent3;
-                       intent3 = new Intent(getApplicationContext(), AfficherContact.class);
-                       intent3.putExtra("id", id_for_Intent);
-                       startActivity(intent3);
-                       finish();
-                   }
-
-                }else{
-                    filled =true;
+        editTextPrenom!!.setText(prenom)
+        editTextNom!!.setText(nom)
+        editTextEmail!!.setText(email)
+        editTextPhone!!.setText(phone)
+        editTextAdresse!!.setText(adresse)
+        buttonCancel = findViewById<View>(R.id.buttonCancel) as ImageButton
+        buttonSave = findViewById<View>(R.id.buttonSave) as ImageButton
+        buttonCancel!!.setOnClickListener {
+            val toast = Toast.makeText(applicationContext, "MODIFICATION ANNULEE", Toast.LENGTH_SHORT)
+            toast.setGravity(Gravity.TOP or Gravity.CENTER_VERTICAL, 1, 5)
+            toast.show()
+            val intent1 = Intent(applicationContext, AfficherContact::class.java)
+            intent1.putExtra("id", id_for_Intent)
+            startActivity(intent1)
+            finish()
+        }
+        buttonSave!!.setOnClickListener {
+            estVide()
+            if (filled) {
+                val sqLiteController = SQLiteController(applicationContext)
+                val i = sqLiteController.updateContact(id, editTextNom!!.text.toString(), editTextPrenom!!.text.toString(), editTextPhone!!.text.toString(), editTextAdresse!!.text.toString(), editTextEmail!!.text.toString())
+                if (i == 1) { //si tout s'est bien deroule
+                    val toast = Toast.makeText(applicationContext, "EFFECTUE", Toast.LENGTH_SHORT)
+                    toast.setGravity(Gravity.TOP or Gravity.CENTER_VERTICAL, 1, 5)
+                    toast.show()
+                    val intentRetour: Intent
+                    intentRetour = Intent(this@EditContact, AfficherContact::class.java)
+                    intentRetour.putExtra("id", id_for_Intent)
+                    startActivity(intentRetour)
+                    finish()
+                } else { //sinon
+                    val toast = Toast.makeText(applicationContext, "ECHEC DE MODIFICATION", Toast.LENGTH_SHORT)
+                    toast.setGravity(Gravity.TOP or Gravity.CENTER_VERTICAL, 1, 5)
+                    toast.show()
+                    val intent3: Intent
+                    intent3 = Intent(applicationContext, AfficherContact::class.java)
+                    intent3.putExtra("id", id_for_Intent)
+                    startActivity(intent3)
+                    finish()
                 }
+            } else {
+                filled = true
             }
-        });
-
+        }
     }
 
     /* methode pr verifier si les champs sont remplis */
-    private void estVide (){
-
-        for(int i = 0; i<collectionEditText.size(); i++){
-            if( TextUtils.isEmpty(collectionEditText.get(i).getText())){
-
-                this.filled = false;
-                collectionEditText.get(i).setError( "Champs obligatoire" );
-
+    private fun estVide() {
+        for (i in collectionEditText!!.indices) {
+            if (TextUtils.isEmpty(collectionEditText!![i]!!.text)) {
+                filled = false
+                collectionEditText!![i]!!.error = "Champs obligatoire"
             }
         }
-
     }
 }

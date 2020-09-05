@@ -1,174 +1,137 @@
-package com.example.contact.view;
+package com.example.contact.view
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import android.content.Intent
+import android.os.Bundle
+import android.view.Menu
+import android.view.View
+import android.widget.AdapterView.OnItemClickListener
+import android.widget.ArrayAdapter
+import android.widget.ImageButton
+import android.widget.ListView
+import android.widget.SearchView
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import com.example.contact.R
+import com.example.contact.controller.CustomAdapter
+import com.example.contact.controller.SQLiteController
+import com.example.contact.model.ContactItem
+import java.util.*
 
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.database.Cursor;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
-import android.widget.ListView;
-import android.widget.SearchView;
-import android.widget.TextView;
-
-import com.example.contact.R;
-import com.example.contact.controller.CustomAdapter;
-import com.example.contact.controller.SQLiteController;
-import com.example.contact.model.ContactItem;
-
-import java.util.ArrayList;
-
-public class MainActivity extends AppCompatActivity {
-
+class MainActivity : AppCompatActivity() {
     //attributes
-private ListView listView;
-private ArrayList<ContactItem> arrayList, resultats;
-private ArrayList arrayListDoublon;
-private ArrayAdapter arrayAdapterDoublon;
-private CustomAdapter arrayAdapter;
-private ImageButton ajouterContact, infoImageButton;
-private ContactItem contactItem;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        listView = (ListView) findViewById(R.id.listView);
-        ajouterContact = (ImageButton) findViewById(R.id.addButton);
-        infoImageButton = (ImageButton) findViewById(R.id.imageButtonInformation) ;
-
-
-
-        ajouterContact.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), InsertContact.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-        arrayList = new ArrayList<ContactItem>();
-        arrayListDoublon = new ArrayList();
-
-        SQLiteController sqLiteController = new SQLiteController(getApplicationContext());
-//        sqLiteController.InsertContact(new ContactItem(1,"Romulus", "Ronick","38471151", "34, rue casseus", "roromulus@yahoo.com"));
-        Cursor cursor = sqLiteController.selectContact();
-        while(cursor.moveToNext()){
-            Integer id = cursor.getInt(cursor.getColumnIndex("id"));
-            String nom = cursor.getString(cursor.getColumnIndex("nom"));
-            String prenom = cursor.getString(cursor.getColumnIndex("prenom"));
-            String phone = cursor.getString(cursor.getColumnIndex("phone"));
-            String adresse = cursor.getString(cursor.getColumnIndex("adresse"));
-            String email = cursor.getString(cursor.getColumnIndex("email"));
-
-            contactItem = new ContactItem(id, nom, prenom,phone,adresse,email);
-            arrayList.add(contactItem);
-            arrayListDoublon.add(nom + " "+prenom);
-//            arrayListDoublon.set(id, prenom+" "+nom);
-
-
+    private var listView: ListView? = null
+    private var arrayList: ArrayList<ContactItem>? = null
+    private var resultats: ArrayList<ContactItem>? = null
+    private var arrayListDoublon: ArrayList<String>? = null
+    private val arrayAdapterDoublon: ArrayAdapter<*>? = null
+    private var arrayAdapter: CustomAdapter? = null
+    private var ajouterContact: ImageButton? = null
+    private var infoImageButton: ImageButton? = null
+    private var contactItem: ContactItem? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        listView = findViewById<View>(R.id.listView) as ListView
+        ajouterContact = findViewById<View>(R.id.addButton) as ImageButton
+        infoImageButton = findViewById<View>(R.id.imageButtonInformation) as ImageButton
+        ajouterContact!!.setOnClickListener {
+            val intent = Intent(applicationContext, InsertContact::class.java)
+            startActivity(intent)
+            finish()
         }
-//        arrayAdapterDoublon = new ArrayAdapter(getApplicationContext(),android.R.layout.simple_list_item_1,arrayListDoublon);
-        arrayAdapter = new CustomAdapter(getApplicationContext(), R.layout.customlist, arrayList);
-        listView.setAdapter(arrayAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                //on va recuperer id du contact selectionne
-                Intent intent = new Intent(getApplicationContext(), AfficherContact.class);
-//                String nomFiltre= arrayAdapterDoublon.getItem(position).toString();
+        arrayList = ArrayList()
+        arrayListDoublon = ArrayList<String>()
+        val sqLiteController = SQLiteController(applicationContext)
+        //        sqLiteController.InsertContact(new ContactItem(1,"Romulus", "Ronick","38471151", "34, rue casseus", "roromulus@yahoo.com"));
+        val cursor = sqLiteController.selectContact()
+        while (cursor.moveToNext()) {
+            val id = cursor.getInt(cursor.getColumnIndex("id"))
+            val nom = cursor.getString(cursor.getColumnIndex("nom"))
+            val prenom = cursor.getString(cursor.getColumnIndex("prenom"))
+            val phone = cursor.getString(cursor.getColumnIndex("phone"))
+            val adresse = cursor.getString(cursor.getColumnIndex("adresse"))
+            val email = cursor.getString(cursor.getColumnIndex("email"))
+            contactItem = ContactItem(id, nom, prenom, phone, adresse, email)
+            arrayList!!.add(contactItem!!)
+            arrayListDoublon!!.add("$nom $prenom")
+            //            arrayListDoublon.set(id, prenom+" "+nom);
+        }
+        //        arrayAdapterDoublon = new ArrayAdapter(getApplicationContext(),android.R.layout.simple_list_item_1,arrayListDoublon);
+        arrayAdapter = CustomAdapter(applicationContext, R.layout.customlist, arrayList!!)
+        listView!!.adapter = arrayAdapter
+        listView!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
+            //on va recuperer id du contact selectionne
+            val intent = Intent(applicationContext, AfficherContact::class.java)
+            //                String nomFiltre= arrayAdapterDoublon.getItem(position).toString();
 //                int identifiant = findIdByName(arrayList, nomFiltre);
 
 //                String tempon = String.valueOf(id);
 //                Integer resultat = Integer.parseInt(tempon);
-                Integer identifiant =( (ContactItem)(arrayAdapter.getItem(position) ) ).getId();
-                intent.putExtra("id", identifiant );
-                startActivity(intent);
-//                finish();
-            }
-        });
-
-        infoImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
-                builder1.setTitle("Infos Contact");
-                String message ="Il y a "+ arrayListDoublon.size()+" contacts enregistres";
-                builder1.setMessage(message);
-                builder1.setCancelable(true);
-                builder1.setNeutralButton(android.R.string.ok,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
-
-                AlertDialog alert11 = builder1.create();
-                alert11.show();
-            }
-        });
-
+            val identifiant = arrayAdapter!!.getItem(position)!!.id
+            intent.putExtra("id", identifiant)
+            startActivity(intent)
+            //                finish();
+        }
+        infoImageButton!!.setOnClickListener {
+            val builder1 = AlertDialog.Builder(this@MainActivity)
+            builder1.setTitle("Infos Contact")
+            val message = "Il y a " + arrayListDoublon!!.size + " contacts enregistres"
+            builder1.setMessage(message)
+            builder1.setCancelable(true)
+            builder1.setNeutralButton(android.R.string.ok
+            ) { dialog, id -> dialog.cancel() }
+            val alert11 = builder1.create()
+            alert11.show()
+        }
     }
 
     //Implementation de search bar
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.menu_item, menu);
-        MenuItem menuItem = menu.findItem(R.id.app_bar_search);
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val menuInflater = menuInflater
+        menuInflater.inflate(R.menu.menu_item, menu)
+        val menuItem = menu.findItem(R.id.app_bar_search)
 
         //filtering
-        SearchView searchView = (SearchView) menuItem.getActionView();
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
+        val searchView = menuItem.actionView as SearchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                return false
             }
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
-
-                String nom, prenom, completeName, filtre;
-                filtre = newText.replaceAll("\\s+","").toLowerCase();
-                resultats =new ArrayList<>();
-                for(ContactItem x: arrayList){
-                    nom = x.getNom().toLowerCase();
-                    prenom = x.getPrenom().toLowerCase();
-                    completeName = prenom+nom;
-
-                    if(nom.contains(newText.toLowerCase()) | prenom.contains(newText.toLowerCase()) | completeName.contains(filtre) ){
-                        resultats.add(x);
+            override fun onQueryTextChange(newText: String): Boolean {
+                var nom: String
+                var prenom: String
+                var completeName: String
+                val filtre: String
+                filtre = newText.replace("\\s+".toRegex(), "").toLowerCase()
+                resultats = ArrayList()
+                for (x in arrayList!!) {
+                    nom = x.nom.toLowerCase()
+                    prenom = x.prenom.toLowerCase()
+                    completeName = prenom + nom
+                    if (nom.contains(newText.toLowerCase()) or prenom.contains(newText.toLowerCase()) or completeName.contains(filtre)) {
+                        resultats!!.add(x)
                     }
                 }
-                ( (CustomAdapter) listView.getAdapter()).update(resultats);
-                return false;
+                (listView!!.adapter as CustomAdapter).update(resultats)
+                return false
             }
-        });
-
-        return true;
+        })
+        return true
     }
 
     //methode pour comparer le nom resultant d une recherche avec les noms contenus ds les objets afin d en trouver l'id
-    public int findIdByName(ArrayList<ContactItem> table, String name){
-        int i, idObject=-1;
-        for(i=0; i<table.size(); i++ ){
-
-            String nameObject = table.get(i).getNom()+" "+table.get(i).getPrenom();
-            if(name.equals(nameObject)){
-                idObject = table.get(i).getId();
+    fun findIdByName(table: ArrayList<ContactItem>, name: String): Int {
+        var i: Int
+        var idObject = -1
+        i = 0
+        while (i < table.size) {
+            val nameObject = table[i].nom + " " + table[i].prenom
+            if (name == nameObject) {
+                idObject = table[i].id
             }
+            i++
         }
-        return idObject;
+        return idObject
     }
 }
