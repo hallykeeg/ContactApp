@@ -9,9 +9,14 @@ import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.RequestQueue
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.example.contact.R
 import com.example.contact.controller.SQLiteController
 import com.example.contact.model.ContactItem
+import org.json.JSONObject
 
 class AfficherContact : AppCompatActivity() {
     private var textViewNom: TextView? = null
@@ -20,6 +25,7 @@ class AfficherContact : AppCompatActivity() {
     private var textViewPhone: TextView? = null
     private var textViewEmail: TextView? = null
     private var modifier: ImageButton? = null
+    lateinit var requestQ: RequestQueue
     private var supprimer: ImageButton? = null
     private val contactItem: ContactItem? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,16 +38,14 @@ class AfficherContact : AppCompatActivity() {
         /* recuperation du nom, du prenom, ...
         * du contact selectionne */
         val intent = intent
-        val id = intent.getIntExtra("id", -1)
-        val sqLiteController = SQLiteController(applicationContext)
-        val cursor = sqLiteController.selectContactByID(id.toString())
-        cursor.moveToFirst()
-        val idContact = cursor.getString(cursor.getColumnIndex("id"))
-        val nom = cursor.getString(cursor.getColumnIndex("nom"))
-        val prenom = cursor.getString(cursor.getColumnIndex("prenom"))
-        val phone = cursor.getString(cursor.getColumnIndex("phone"))
-        val adresse = cursor.getString(cursor.getColumnIndex("adresse"))
-        val email = cursor.getString(cursor.getColumnIndex("email"))
+        val id = intent.getIntExtra("id", 1).toString()
+        val nom = intent.getStringExtra("nom")
+        val prenom = intent.getStringExtra("prenom")
+        val phone = intent.getStringExtra("phone")
+        val adresse = intent.getStringExtra("adresse")
+        val email = intent.getStringExtra("email")
+
+
 
 //        contactItem = new ContactItem(idContact, nom, prenom, phone, adresse,email);
 
@@ -58,9 +62,34 @@ class AfficherContact : AppCompatActivity() {
             builder.setTitle("Confirmation")
             builder.setMessage("Voulez-vous vraiment supprimer $prenom $nom ?")
             builder.setPositiveButton("OUI") { dialog, which ->
-                val sqLiteController1 = SQLiteController(applicationContext)
-                val reponse = sqLiteController1.dropContact(idContact)
-                if (reponse == 1) {
+                val url="http://192.168.0.103/contact/manager.php"
+                var etat :Boolean = true
+                requestQ = Volley.newRequestQueue(applicationContext)
+                val pushRequest : StringRequest = object : StringRequest(Method.POST, url,
+                        Response.Listener {
+                            val jsonResponse = JSONObject(it)
+                            val retour = jsonResponse.getString("response")
+//                            Toast.makeText(applicationContext,jsonResponse.getString("response"),Toast.LENGTH_LONG).show()
+                            etat = jsonResponse.getString("response")=="success"
+                            MainActivity.arrayAdapter!!.notifyDataSetChanged()
+                        },
+                        Response.ErrorListener {
+//                    val jsonResponseError = JSONObject(it)
+                        }){
+                    override fun getParams(): MutableMap<String, String> {
+
+                        val params: MutableMap<String, String> = HashMap()
+                        params["action"]="delete"
+                        params["id"] =id.toString()
+
+                        return params
+                    }
+                }
+                requestQ.add(pushRequest)
+
+
+
+            if (etat) {
                     val toast = Toast.makeText(applicationContext, "CONTACT SUPPRIME", Toast.LENGTH_SHORT)
                     toast.setGravity(Gravity.TOP or Gravity.CENTER_VERTICAL, 1, 5)
                     toast.show()
@@ -87,7 +116,7 @@ class AfficherContact : AppCompatActivity() {
         //action de modification de contact
         modifier!!.setOnClickListener {
             val intent1 = Intent(applicationContext, EditContact::class.java)
-            intent1.putExtra("id", idContact)
+            intent1.putExtra("id", id)
             intent1.putExtra("nom", nom)
             intent1.putExtra("prenom", prenom)
             intent1.putExtra("adresse", adresse)

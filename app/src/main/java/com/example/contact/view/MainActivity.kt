@@ -11,55 +11,85 @@ import android.widget.ListView
 import android.widget.SearchView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.Request
+import com.android.volley.RequestQueue
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.example.contact.R
 import com.example.contact.controller.CustomAdapter
 import com.example.contact.controller.SQLiteController
 import com.example.contact.model.ContactItem
 import java.util.*
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
     //attributes
-    private var listView: ListView? = null
-    private var arrayList: ArrayList<ContactItem>? = null
-    private var resultats: ArrayList<ContactItem>? = null
-    private var arrayListDoublon: ArrayList<String>? = null
-    private val arrayAdapterDoublon: ArrayAdapter<*>? = null
-    private var arrayAdapter: CustomAdapter? = null
-    private var ajouterContact: ImageButton? = null
-    private var infoImageButton: ImageButton? = null
-    private var contactItem: ContactItem? = null
+    lateinit var listView: ListView
+     val arrayList = ArrayList<ContactItem>()
+    lateinit var resultats: ArrayList<ContactItem>
+    lateinit var arrayListDoublon: ArrayList<String>
+//    private val arrayAdapterDoublon: ArrayAdapter<*>? = null
+    companion object{
+    lateinit var arrayAdapter: CustomAdapter
+}
+
+    lateinit var ajouterContact: ImageButton
+    lateinit var infoImageButton: ImageButton
+
+    lateinit var requestQ: RequestQueue
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         listView = findViewById<View>(R.id.listView) as ListView
         ajouterContact = findViewById<View>(R.id.addButton) as ImageButton
         infoImageButton = findViewById<View>(R.id.imageButtonInformation) as ImageButton
-        ajouterContact!!.setOnClickListener {
+        ajouterContact.setOnClickListener {
             val intent = Intent(applicationContext, InsertContact::class.java)
             startActivity(intent)
             finish()
         }
-        arrayList = ArrayList()
-        arrayListDoublon = ArrayList<String>()
-        val sqLiteController = SQLiteController(applicationContext)
-        //        sqLiteController.InsertContact(new ContactItem(1,"Romulus", "Ronick","38471151", "34, rue casseus", "roromulus@yahoo.com"));
-        val cursor = sqLiteController.selectContact()
-        while (cursor.moveToNext()) {
-            val id = cursor.getInt(cursor.getColumnIndex("id"))
-            val nom = cursor.getString(cursor.getColumnIndex("nom"))
-            val prenom = cursor.getString(cursor.getColumnIndex("prenom"))
-            val phone = cursor.getString(cursor.getColumnIndex("phone"))
-            val adresse = cursor.getString(cursor.getColumnIndex("adresse"))
-            val email = cursor.getString(cursor.getColumnIndex("email"))
-            contactItem = ContactItem(id, nom, prenom, phone, adresse, email)
-            arrayList!!.add(contactItem!!)
-            arrayListDoublon!!.add("$nom $prenom")
-            //            arrayListDoublon.set(id, prenom+" "+nom);
-        }
-        //        arrayAdapterDoublon = new ArrayAdapter(getApplicationContext(),android.R.layout.simple_list_item_1,arrayListDoublon);
-        arrayAdapter = CustomAdapter(applicationContext, R.layout.customlist, arrayList!!)
-        listView!!.adapter = arrayAdapter
-        listView!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
+
+        arrayListDoublon = ArrayList()
+
+        requestQ = Volley.newRequestQueue(applicationContext)
+
+        val url = "http://192.168.0.103/contact/manager.php?action=select"
+        val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
+                { response ->
+                    var jsonArray = response.getJSONArray("contact_tbl")
+                    for (i in 0 until jsonArray.length()){
+                        var jsonObject = jsonArray.getJSONObject(i)
+                        var id = jsonObject.getInt("id")
+                        var prenom = jsonObject.getString("prenom")
+                        var nom = jsonObject.getString("nom")
+                        var adresse = jsonObject.getString("adresse")
+                        var email= jsonObject.getString("email")
+                        var phone = jsonObject.getString("phone")
+                        // Toast.makeText(context, prenom+" "+ nom, Toast.LENGTH_LONG).show()
+
+                       var contactItem = ContactItem(id, nom, prenom, phone, adresse, email)
+                        arrayList.add(contactItem)
+                        arrayAdapter.notifyDataSetChanged()
+                        println(arrayList[i].nom)
+
+                        arrayListDoublon.add("$nom $prenom")
+                    }
+
+                },
+                {
+                    error ->
+                    println("There is an error: "+ error)
+
+                })
+        requestQ.add(jsonObjectRequest)
+
+        arrayAdapter = CustomAdapter(applicationContext, R.layout.customlist, arrayList)
+        listView.adapter = arrayAdapter
+
+
+        listView.onItemClickListener = OnItemClickListener { parent, view, position, id ->
             //on va recuperer id du contact selectionne
             val intent = Intent(applicationContext, AfficherContact::class.java)
             //                String nomFiltre= arrayAdapterDoublon.getItem(position).toString();
@@ -67,15 +97,25 @@ class MainActivity : AppCompatActivity() {
 
 //                String tempon = String.valueOf(id);
 //                Integer resultat = Integer.parseInt(tempon);
-            val identifiant = arrayAdapter!!.getItem(position)!!.id
+            val identifiant = arrayAdapter.getItem(position)!!.id
+            val nom = arrayAdapter.getItem(position)!!.nom
+            val prenom = arrayAdapter.getItem(position)!!.prenom
+            val adresse = arrayAdapter.getItem(position)!!.adresse
+            val phone = arrayAdapter.getItem(position)!!.phone
+            val email = arrayAdapter.getItem(position)!!.email
             intent.putExtra("id", identifiant)
+            intent.putExtra("nom", nom)
+            intent.putExtra("prenom", prenom)
+            intent.putExtra("adresse", adresse)
+            intent.putExtra("phone", phone)
+            intent.putExtra("email", email)
             startActivity(intent)
             //                finish();
         }
-        infoImageButton!!.setOnClickListener {
+        infoImageButton.setOnClickListener {
             val builder1 = AlertDialog.Builder(this@MainActivity)
             builder1.setTitle("Infos Contact")
-            val message = "Il y a " + arrayListDoublon!!.size + " contacts enregistres"
+            val message = "Il y a " + arrayListDoublon.size + " contacts enregistres"
             builder1.setMessage(message)
             builder1.setCancelable(true)
             builder1.setNeutralButton(android.R.string.ok
@@ -105,15 +145,15 @@ class MainActivity : AppCompatActivity() {
                 val filtre: String
                 filtre = newText.replace("\\s+".toRegex(), "").toLowerCase()
                 resultats = ArrayList()
-                for (x in arrayList!!) {
+                for (x in arrayList) {
                     nom = x.nom.toLowerCase()
                     prenom = x.prenom.toLowerCase()
                     completeName = prenom + nom
                     if (nom.contains(newText.toLowerCase()) or prenom.contains(newText.toLowerCase()) or completeName.contains(filtre)) {
-                        resultats!!.add(x)
+                        resultats.add(x)
                     }
                 }
-                (listView!!.adapter as CustomAdapter).update(resultats)
+                (listView.adapter as CustomAdapter).update(resultats)
                 return false
             }
         })

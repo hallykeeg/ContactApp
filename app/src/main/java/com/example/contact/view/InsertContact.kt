@@ -9,9 +9,14 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.RequestQueue
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.example.contact.R
 import com.example.contact.controller.SQLiteController
 import com.example.contact.model.ContactItem
+import org.json.JSONObject
 import java.util.*
 
 class InsertContact : AppCompatActivity() {
@@ -23,6 +28,7 @@ class InsertContact : AppCompatActivity() {
     private val contactItem: ContactItem? = null
     private var sauvegarder: ImageButton? = null
     private var annuler: ImageButton? = null
+    lateinit var requestQ: RequestQueue
     private var collectionEditText: ArrayList<EditText?>? = null
     private var allFieldFilled = true
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,19 +65,42 @@ class InsertContact : AppCompatActivity() {
     private fun sauvegarder() {
         estVide(collectionEditText)
         if (allFieldFilled) { //tous les champs sont remplis
-            val sqLiteController = SQLiteController(applicationContext)
-            val nom: String
-            val prenom: String
-            val phone: String
-            val adresse: String
-            val email: String
-            nom = editTextNom!!.text.toString()
-            prenom = editTextPrenom!!.text.toString()
-            phone = editTextPhone!!.text.toString()
-            adresse = editTextAdresse!!.text.toString()
-            email = editTextEmail!!.text.toString()
-            val l = sqLiteController.insertContact(ContactItem(1, nom, prenom, phone, adresse, email))
-            if (l == -1L) {
+           // val sqLiteController = SQLiteController(applicationContext)
+            val nom: String = editTextNom!!.text.toString()
+            val prenom: String = editTextPrenom!!.text.toString()
+            val phone: String = editTextPhone!!.text.toString()
+            val adresse: String = editTextAdresse!!.text.toString()
+            val email: String = editTextEmail!!.text.toString()
+
+           // val l = sqLiteController.insertContact(ContactItem(1, nom, prenom, phone, adresse, email))
+
+            val url="http://192.168.0.103/contact/manager.php"
+            var etat: Boolean = true
+            requestQ = Volley.newRequestQueue(applicationContext)
+            val pushRequest : StringRequest = object : StringRequest(Method.POST, url,
+                    Response.Listener {
+                        val jsonResponse = JSONObject(it)
+                        MainActivity.arrayAdapter!!.notifyDataSetChanged()
+                    },
+                    Response.ErrorListener {
+//                    val jsonResponseError = JSONObject(it)
+                    }){
+                override fun getParams(): MutableMap<String, String> {
+
+                    val params: MutableMap<String, String> = HashMap()
+                    params["action"]="insert"
+                    params["nom"] = nom
+                    params["prenom"] = prenom
+                    params["phone"] = phone
+                    params["adresse"]= adresse
+                    params["email"] = email
+
+                    return params
+                }
+            }
+            requestQ.add(pushRequest)
+
+            if (!etat) {
 
                 //insertion echoue, reessayez
                 val toast = Toast.makeText(applicationContext, "ECHEC ENREGISTREMENT", Toast.LENGTH_SHORT)
